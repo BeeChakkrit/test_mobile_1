@@ -134,11 +134,53 @@ class _MyHomePageState extends State<MyHomePage> {
             itemCount: item.length,
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    indexselect = index;
-                  });
-                  print(indexselect);
+                onTap: () async {
+                  ListIndex selectedItem = item[index];
+
+                  indexselect = selectedItem.index;
+
+                  void addIfNotExists(List<ListIndex> list, ListIndex newItem) {
+                    if (!list.any((e) => e.index == newItem.index)) {
+                      list.add(newItem);
+                    }
+                  }
+
+                  if (selectedItem.type == 0) {
+                    addIfNotExists(listicon1, selectedItem);
+                  } else if (selectedItem.type == 1) {
+                    addIfNotExists(listicon2, selectedItem);
+                  } else {
+                    addIfNotExists(listicon3, selectedItem);
+                  }
+                  indexselect = null;
+
+                  List<ListIndex> selectedList =
+                      item[index].type == 0
+                          ? listicon1
+                          : item[index].type == 1
+                          ? listicon2
+                          : listicon3;
+
+                  final result = await showModalBottomSheet<int>(
+                    backgroundColor: Colors.black45,
+                    enableDrag: true,
+                    context: context,
+                    builder: (context) {
+                      return ListClass(selectedList: selectedList, colorvselected: selectedItem.index);
+                    },
+                  );
+                  item.removeAt(index);
+
+                  if (result != null) {
+                    updateItemList();
+                    setState(() {
+                      selectedValue = result;
+                    });
+
+                    _scrollDown(result);
+                  }
+
+                  setState(() {});
                 },
                 child: Container(
                   color: selectedValue == item[index].index ? Colors.red : Colors.white,
@@ -169,36 +211,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           } else {
                             addIfNotExists(listicon3, selectedItem);
                           }
-
-                          // if (selectedItem.type == 0) {
-                          //   listicon1.add(
-                          //     ListIndex(
-                          //       type: selectedItem.type,
-                          //       index: selectedItem.index,
-                          //       icon: selectedItem.icon,
-                          //       sumNumbers: selectedItem.sumNumbers,
-                          //     ),
-                          //   );
-                          // } else if (selectedItem.type == 1) {
-                          //   listicon2.add(
-                          //     ListIndex(
-                          //       type: selectedItem.type,
-                          //       index: selectedItem.index,
-                          //       icon: selectedItem.icon,
-                          //       sumNumbers: selectedItem.sumNumbers,
-                          //     ),
-                          //   );
-                          // } else {
-                          //   listicon3.add(
-                          //     ListIndex(
-                          //       type: selectedItem.type,
-                          //       index: selectedItem.index,
-                          //       icon: selectedItem.icon,
-                          //       sumNumbers: selectedItem.sumNumbers,
-                          //     ),
-                          //   );
-                          // }
-
                           indexselect = null;
 
                           List<ListIndex> selectedList =
@@ -283,27 +295,36 @@ class _ListClassState extends State<ListClass> {
             child: ListView.builder(
               itemCount: sortedList.length,
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  color: widget.colorvselected == sortedList[index].index ? Colors.green : Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: Row(
-                      children: [
-                        Text('index : ${sortedList[index].index}'),
-                        SizedBox(width: 10),
-                        Text('Number: ${sortedList[index].sumNumbers}'),
-                        Expanded(child: Container()),
-                        IconButton(
-                          icon: Icon(sortedList[index].icon),
-                          onPressed: () {
-                            Navigator.pop(context, sortedList[index].index);
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context, sortedList[index].index);
 
-                            setState(() {
-                              widget.selectedList.removeAt(index);
-                            });
-                          },
-                        ),
-                      ],
+                    setState(() {
+                      widget.selectedList.removeAt(index);
+                    });
+                  },
+                  child: Container(
+                    color: widget.colorvselected == sortedList[index].index ? Colors.green : Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      child: Row(
+                        children: [
+                          Text('index : ${sortedList[index].index}'),
+                          SizedBox(width: 10),
+                          Text('Number: ${sortedList[index].sumNumbers}'),
+                          Expanded(child: Container()),
+                          IconButton(
+                            icon: Icon(sortedList[index].icon),
+                            onPressed: () {
+                              Navigator.pop(context, sortedList[index].index);
+
+                              setState(() {
+                                widget.selectedList.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
