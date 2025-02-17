@@ -156,34 +156,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
                           indexselect = selectedItem.index;
 
-                          if (selectedItem.type == 0) {
-                            listicon1.add(
-                              ListIndex(
-                                type: selectedItem.type,
-                                index: selectedItem.index,
-                                icon: selectedItem.icon,
-                                sumNumbers: selectedItem.sumNumbers,
-                              ),
-                            );
-                          } else if (selectedItem.type == 1) {
-                            listicon2.add(
-                              ListIndex(
-                                type: selectedItem.type,
-                                index: selectedItem.index,
-                                icon: selectedItem.icon,
-                                sumNumbers: selectedItem.sumNumbers,
-                              ),
-                            );
-                          } else {
-                            listicon3.add(
-                              ListIndex(
-                                type: selectedItem.type,
-                                index: selectedItem.index,
-                                icon: selectedItem.icon,
-                                sumNumbers: selectedItem.sumNumbers,
-                              ),
-                            );
+                          void addIfNotExists(List<ListIndex> list, ListIndex newItem) {
+                            if (!list.any((e) => e.index == newItem.index)) {
+                              list.add(newItem);
+                            }
                           }
+
+                          if (selectedItem.type == 0) {
+                            addIfNotExists(listicon1, selectedItem);
+                          } else if (selectedItem.type == 1) {
+                            addIfNotExists(listicon2, selectedItem);
+                          } else {
+                            addIfNotExists(listicon3, selectedItem);
+                          }
+
+                          // if (selectedItem.type == 0) {
+                          //   listicon1.add(
+                          //     ListIndex(
+                          //       type: selectedItem.type,
+                          //       index: selectedItem.index,
+                          //       icon: selectedItem.icon,
+                          //       sumNumbers: selectedItem.sumNumbers,
+                          //     ),
+                          //   );
+                          // } else if (selectedItem.type == 1) {
+                          //   listicon2.add(
+                          //     ListIndex(
+                          //       type: selectedItem.type,
+                          //       index: selectedItem.index,
+                          //       icon: selectedItem.icon,
+                          //       sumNumbers: selectedItem.sumNumbers,
+                          //     ),
+                          //   );
+                          // } else {
+                          //   listicon3.add(
+                          //     ListIndex(
+                          //       type: selectedItem.type,
+                          //       index: selectedItem.index,
+                          //       icon: selectedItem.icon,
+                          //       sumNumbers: selectedItem.sumNumbers,
+                          //     ),
+                          //   );
+                          // }
 
                           indexselect = null;
 
@@ -210,22 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               selectedValue = result;
                             });
 
-                            // WidgetsBinding.instance.addPostFrameCallback((_) {
-                            //   double itemHeight = 60.0;
-                            //   double _position = index * itemHeight;
-
-                            //   _scrollController.animateTo(
-                            //     _position,
-                            //     duration: Duration(milliseconds: 300),
-                            //     curve: Curves.easeInOut,
-                            //   );
-                            // });
                             _scrollDown(result);
-                            // _scrollController.animateTo(
-                            //   0.0,
-                            //   curve: (result >= 19) ? Curves.easeIn : Curves.fastOutSlowIn,
-                            //   duration: const Duration(milliseconds: 300),
-                            // );
                           }
 
                           setState(() {});
