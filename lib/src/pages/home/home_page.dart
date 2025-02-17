@@ -3,15 +3,6 @@ import 'package:flutter/material.dart';
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -19,7 +10,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<int> numbers = List.filled(40, 0);
+  List<int> numbers = List.filled(41, 0);
 
   List<ListIndex> listicon1 = [];
   List<ListIndex> listicon2 = [];
@@ -32,13 +23,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     addData();
-    _scrollController = ScrollController(); // Initialize the ScrollController
+    _scrollController = ScrollController();
 
-    numbers = List.filled(40, 0); // Initialize with 45 zeros
+    numbers = List.filled(41, 0);
     numbers[0] = 0;
     numbers[1] = 1;
 
-    for (int i = 2; i < 40; i++) {
+    for (int i = 2; i < 41; i++) {
       numbers[i] = numbers[i - 1] + numbers[i - 2];
     }
 
@@ -106,6 +97,19 @@ class _MyHomePageState extends State<MyHomePage> {
       item.clear();
       item.addAll(List.of(item2));
     });
+  }
+
+  void _scrollDown(int index) {
+    double itemHeight = 10.0;
+    double targetOffset = index * 0.5;
+
+    index > 19
+        ? _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(seconds: 2),
+          curve: Curves.linear,
+        )
+        : _scrollController.animateTo(targetOffset, duration: Duration(seconds: 2), curve: Curves.easeInOut);
   }
 
   @override
@@ -206,16 +210,22 @@ class _MyHomePageState extends State<MyHomePage> {
                               selectedValue = result;
                             });
 
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              double itemHeight = 60.0; // Adjust this to the correct height of your list item
-                              double _position = index * itemHeight;
+                            // WidgetsBinding.instance.addPostFrameCallback((_) {
+                            //   double itemHeight = 60.0;
+                            //   double _position = index * itemHeight;
 
-                              _scrollController.animateTo(
-                                _position,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            });
+                            //   _scrollController.animateTo(
+                            //     _position,
+                            //     duration: Duration(milliseconds: 300),
+                            //     curve: Curves.easeInOut,
+                            //   );
+                            // });
+                            _scrollDown(result);
+                            // _scrollController.animateTo(
+                            //   0.0,
+                            //   curve: (result >= 19) ? Curves.easeIn : Curves.fastOutSlowIn,
+                            //   duration: const Duration(milliseconds: 300),
+                            // );
                           }
 
                           setState(() {});
